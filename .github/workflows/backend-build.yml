@@ -22,7 +22,7 @@ concurrency:
 jobs:
   backend-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 4
     defaults:
       run:
         working-directory: backend
