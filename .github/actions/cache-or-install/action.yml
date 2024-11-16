@@ -1,0 +1,31 @@
+name: use cache or install node modules
+description: Use cache if available, otherwise install node modules
+
+inputs:
+  working-directory:
+    description: The directory where the package.json is located
+    required: true
+  node-version:
+    description: The version of Node.js to use
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Find cached dependencies
+      uses: actions/cache@v4
+      id: cache
+      with:
+        path: ${{ inputs.working-directory }}/node_modules
+        key: ${{ runner.arch }}-${{ runner.os }}-node-${{ inputs.node-version }}-npm-${{ hashFiles(format('{0}/package-lock.json', inputs.working-directory)) }}
+
+    - name: Install dependencies
+      if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npm ci
+
+    - name: echo
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: ls -la
