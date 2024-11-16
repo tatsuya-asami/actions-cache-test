@@ -2,7 +2,7 @@ name: Cache modules
 on:
   push:
     branches:
-      - develop
+      - main
     paths:
       - "backend/package-lock.json"
       - "web/package-lock.json"
