@@ -22,7 +22,7 @@ concurrency:
 jobs:
   web-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 5
     defaults:
       run:
         working-directory: web
