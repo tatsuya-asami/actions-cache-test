@@ -1,4 +1,4 @@
-name: Cache modules
+name: Save node_modules for cache
 on:
   push:
     branches:
@@ -18,12 +18,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  backend-build:
+  paths-filter:
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 1
+    outputs:
+      working-directories: ${{ steps.changes.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            backend:
+              - 'backend/package-lock.json'
+            web-v2:
+              - 'web/package-lock.json'
+
+  save-cache:
+    runs-on: linux-arm64-4
+    timeout-minutes: 10
+    needs: paths-filter
     strategy:
       matrix:
-        working-directory: [backend, web]
+        runner: [ubuntu-latest, linux-arm64-4]
+        working-directory: ${{ fromJSON(needs.paths-filter.outputs.working-directories) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -31,11 +49,8 @@ jobs:
         uses: actions/setup-node@v4
         id: setup_node
 
-      - name: Restore node modules or npm install
+      - name: Save node modules
         uses: ./.github/actions/cache-or-install
         with:
           working-directory: ${{ matrix.working-directory }}
           node-version: ${{ steps.setup_node.outputs.node-version }}
-
-      - name: echo
-        run: ls -la
