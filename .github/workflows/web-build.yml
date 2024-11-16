@@ -5,6 +5,9 @@ on:
     branches:
       - develop
       - main
+  push:
+    branches:
+      - main
 
 permissions: write-all
 
@@ -19,7 +22,7 @@ concurrency:
 jobs:
   web-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 6
     defaults:
       run:
         working-directory: web
