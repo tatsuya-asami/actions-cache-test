@@ -40,7 +40,7 @@ jobs:
     needs: paths-filter
     strategy:
       matrix:
-        runner: [ubuntu-latest, linux-arm64-4]
+        runner: [ubuntu-latest, debian-latest]
         working-directory: ${{ fromJSON(needs.paths-filter.outputs.working-directories) }}
     steps:
       - uses: actions/checkout@v4
