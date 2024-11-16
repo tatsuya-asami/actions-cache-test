@@ -6,6 +6,7 @@ on:
     paths:
       - "backend/package-lock.json"
       - "web/package-lock.json"
+      - ".github/workflows/cache-modules.yml"
 
 permissions: write-all
 
@@ -31,7 +32,7 @@ jobs:
           filters: |
             backend:
               - 'backend/package-lock.json'
-            web-v2:
+            web:
               - 'web/package-lock.json'
 
   save-cache:
