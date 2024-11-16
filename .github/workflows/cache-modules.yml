@@ -1,10 +1,11 @@
-name: backend build
+name: Cache modules
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+  push:
     branches:
       - develop
-      - main
+    paths:
+      - "backend/package-lock.json"
+      - "web/package-lock.json"
 
 permissions: write-all
 
@@ -20,9 +21,9 @@ jobs:
   backend-build:
     runs-on: ubuntu-latest
     timeout-minutes: 4
-    defaults:
-      run:
-        working-directory: backend
+    strategy:
+      matrix:
+        working-directory: [backend, web]
     steps:
       - uses: actions/checkout@v4
 
@@ -33,11 +34,8 @@ jobs:
       - name: Restore node modules or npm install
         uses: ./.github/actions/cache-or-install
         with:
-          working-directory: backend
+          working-directory: ${{ matrix.working-directory }}
           node-version: ${{ steps.setup_node.outputs.node-version }}
 
       - name: echo
         run: ls -la
-
-      - name: Build
-        run: npm run build
