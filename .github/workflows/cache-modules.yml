@@ -1,0 +1,41 @@
+name: Cache modules
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - "backend/package-lock.json"
+      - "web/package-lock.json"
+
+permissions: write-all
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    strategy:
+      matrix:
+        working-directory: [backend, web]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        id: setup_node
+
+      - name: Restore node modules or npm install
+        uses: ./.github/actions/cache-or-install
+        with:
+          working-directory: ${{ matrix.working-directory }}
+          node-version: ${{ steps.setup_node.outputs.node-version }}
+
+      - name: echo
+        run: ls -la
