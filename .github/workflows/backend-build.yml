@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   backend-build:
-    runs-on: linux-arm64-4
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
       run:
